@@ -8,11 +8,10 @@ public:
     HIBPPolicyEvaluator();
     ~HIBPPolicyEvaluator();
 
-    bool IsAcceptablePassword(const wchar_t* password);
+    bool IsAcceptablePassword(const std::wstring& password);
 
 private:
-    std::string ConvertToStr(const wchar_t* input);
-    std::wstring CalculateHash(std::string input);
-    std::wstring GetHashBucket(std::wstring input);
+    std::wstring CalculateHash(const std::wstring& input);
+    std::wstring GetHashBucket(const std::wstring& input);
 };
 

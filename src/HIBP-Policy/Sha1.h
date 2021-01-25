@@ -6,6 +6,12 @@
 
 class Sha1
 {
+public:
+    Sha1();
+    ~Sha1();
+
+    std::wstring CalculateHashHexString(const std::wstring& inputText);
+
 private:
     BCRYPT_HASH_HANDLE _hashHandle = NULL;
 
@@ -17,11 +23,5 @@ private:
     unsigned char* _hashResult = NULL;
 
     std::wstring ResultToHexString();
-
-public:
-    Sha1();
-    ~Sha1();
-
-    std::wstring CalculateHashHexString(std::string inputText);
 };
 

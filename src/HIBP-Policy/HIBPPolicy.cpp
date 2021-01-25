@@ -13,7 +13,7 @@ extern "C" __declspec(dllexport) unsigned char __stdcall PasswordFilter(
     try {
         HIBPPolicyEvaluator evaluator = HIBPPolicyEvaluator();
 
-        allowPasswordChange = evaluator.IsAcceptablePassword(password->Buffer);
+        allowPasswordChange = evaluator.IsAcceptablePassword(std::wstring(password->Buffer));
     }
     catch(...) {
         // Catch any errors.

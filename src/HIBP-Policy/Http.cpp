@@ -1,7 +1,7 @@
 #include "Http.h"
 #include <codecvt>
 
-Http::Http(std::wstring serverName) {
+Http::Http(const std::wstring& serverName) {
     _hSession = WinHttpOpen(
         L"HIBP-Policy-Evaluator",
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
@@ -10,7 +10,7 @@ Http::Http(std::wstring serverName) {
         0);
 
     if (!_hSession)
-        throw "WinHTTP: Could not open session.";
+        throw std::exception("WinHTTP: Could not open session.");
 
     _hConnect = WinHttpConnect(
         _hSession,
@@ -19,7 +19,7 @@ Http::Http(std::wstring serverName) {
         0);
 
     if (!_hConnect)
-        throw "WinHTTP: Could not connect to server.";
+        throw std::exception("WinHTTP: Could not connect to server.");
 }
 
 Http::~Http() {
@@ -29,7 +29,7 @@ Http::~Http() {
         WinHttpCloseHandle(_hSession);
 }
 
-std::wstring Http::LoadHashBucket(std::wstring requestPath, std::wstring hexHash, int prefixLength) {
+std::wstring Http::LoadHashBucket(const std::wstring& requestPath, const std::wstring& hexHash, int prefixLength) {
     HINTERNET hRequest;
     bool hasResult = false;
 
@@ -56,7 +56,7 @@ std::wstring Http::LoadHashBucket(std::wstring requestPath, std::wstring hexHash
         hasResult = WinHttpReceiveResponse(hRequest, NULL);
 
     if (!hasResult)
-        throw "WinHTTP: Could not receive response.";
+        throw std::exception("WinHTTP: Could not receive response.");
 
     //Read the result
     std::string httpResult = ReadResult(hRequest);
@@ -78,7 +78,7 @@ std::string Http::ReadResult(HINTERNET hRequest) {
         // Check for available data.
         dataSize = 0;
         if (!WinHttpQueryDataAvailable(hRequest, &dataSize))
-            throw "WinHTTP: QueryDataAvailable was false.";
+            throw std::exception("WinHTTP: QueryDataAvailable was false.");
 
         if (dataSize == 0)
             break;
@@ -87,13 +87,13 @@ std::string Http::ReadResult(HINTERNET hRequest) {
         char* outBuffer = new char[dataSize + 1];
         if (!outBuffer)
         {
-            throw "WinHTTP: Could not allocate buffer for request result.";
+            throw std::exception("WinHTTP: Could not allocate buffer for request result.");
         }
             // Read the data.
         ZeroMemory(outBuffer, dataSize + 1);
 
         if (!WinHttpReadData(hRequest, outBuffer, dataSize, &downloadedSize))
-            throw "WinHTTP: Could not read data from WinHTTP.";
+            throw std::exception("WinHTTP: Could not read data from WinHTTP.");
 
         result = result + outBuffer;
 

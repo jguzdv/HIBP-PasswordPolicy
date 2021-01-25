@@ -8,10 +8,10 @@
 class Http
 {
 public:
-    Http(std::wstring serverName);
+    Http(const std::wstring& serverName);
     ~Http();
 
-    std::wstring LoadHashBucket(std::wstring requestPath, std::wstring hexHash, int prefixLength);
+    std::wstring LoadHashBucket(const std::wstring& requestPath, const std::wstring& hexHash, int prefixLength);
 
 private:
     HINTERNET _hSession;

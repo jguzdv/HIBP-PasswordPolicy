@@ -16,9 +16,8 @@ HIBPPolicyEvaluator::~HIBPPolicyEvaluator() {
 
 }
 
-bool HIBPPolicyEvaluator::IsAcceptablePassword(const wchar_t* passwordInput) {
-    std::string password = ConvertToStr(passwordInput);
-    std::wstring passwordHash = CalculateHash(password);
+bool HIBPPolicyEvaluator::IsAcceptablePassword(const std::wstring& passwordInput) {
+    std::wstring passwordHash = CalculateHash(passwordInput);
     std::wstring hashBucket = GetHashBucket(passwordHash);
 
     std::wstring hashSuffix = passwordHash.substr(HIBP_PREFIX_LENGTH);
@@ -28,19 +27,13 @@ bool HIBPPolicyEvaluator::IsAcceptablePassword(const wchar_t* passwordInput) {
         return false;
 }
 
-std::string HIBPPolicyEvaluator::ConvertToStr(const wchar_t* input)
-{
-    std::wstring inputWString = std::wstring(input);
-    return std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().to_bytes(inputWString);
-}
-
-std::wstring HIBPPolicyEvaluator::CalculateHash(std::string input)
+std::wstring HIBPPolicyEvaluator::CalculateHash(const std::wstring& input)
 {
     Sha1 sha1 = Sha1();
     return sha1.CalculateHashHexString(input.c_str());
 }
 
-std::wstring HIBPPolicyEvaluator::GetHashBucket(std::wstring input)
+std::wstring HIBPPolicyEvaluator::GetHashBucket(const std::wstring& input)
 {
     Http http = Http(HIBP_SERVER_NAME);
     return http.LoadHashBucket(HIBP_REQUEST_PATH, input, HIBP_PREFIX_LENGTH);

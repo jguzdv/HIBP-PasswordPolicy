@@ -12,7 +12,7 @@ Sha1::Sha1()
         &cbData, 0);
 
     if (bCryptStatus < 0)
-        throw "BCrypt: NTStatus of GetProperty(Object_Length) was -lt 0";
+        throw std::exception("BCrypt: NTStatus of GetProperty(Object_Length) was -lt 0");
 
     bCryptStatus = BCryptGetProperty(
         BCRYPT_SHA1_ALG_HANDLE, BCRYPT_HASH_LENGTH,
@@ -20,7 +20,7 @@ Sha1::Sha1()
         &cbData, 0);
 
     if (bCryptStatus < 0)
-        throw "BCrypt: NTStatus of GetProperty(BCRYPT_HASH_LENGTH) was -lt 0";
+        throw std::exception("BCrypt: NTStatus of GetProperty(BCRYPT_HASH_LENGTH) was -lt 0");
 
     _hashObject = (unsigned char*)HeapAlloc(GetProcessHeap(), 0, _hashObjectLength);
     _hashResult = (unsigned char*)HeapAlloc(GetProcessHeap(), 0, _hashLength);
@@ -31,7 +31,7 @@ Sha1::Sha1()
         NULL, 0, 0);
 
     if (bCryptStatus < 0)
-        throw "BCrypt: NTStatus of CreateHash was -lt 0";
+        throw std::exception("BCrypt: NTStatus of CreateHash was -lt 0");
 }
 
 Sha1::~Sha1()
@@ -57,18 +57,20 @@ std::wstring Sha1::ResultToHexString() {
     return std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(resultString);
 }
 
-std::wstring Sha1::CalculateHashHexString(std::string inputText)
+std::wstring Sha1::CalculateHashHexString(const std::wstring& inputText)
 {
-    long bCryptStatus;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8Converter;
+    std::string utf8String = utf8Converter.to_bytes(inputText);
 
+    long bCryptStatus;
     bCryptStatus = BCryptHashData(
         _hashHandle,
-        (unsigned char*)inputText.c_str(),
-        inputText.length(),
+        (unsigned char*)utf8String.c_str(),
+        utf8String.length(),
         0);
 
     if (bCryptStatus < 0)
-        throw "BCrypt: NTStatus of HashData was -lt 0";
+        throw std::exception("BCrypt: NTStatus of HashData was -lt 0");
 
     bCryptStatus = BCryptFinishHash(
         _hashHandle,
@@ -77,7 +79,7 @@ std::wstring Sha1::CalculateHashHexString(std::string inputText)
         0);
 
     if (bCryptStatus < 0)
-        throw "BCrypt: NTStatus of FinishHash was -lt 0";
+        throw std::exception("BCrypt: NTStatus of FinishHash was -lt 0");
 
     return ResultToHexString();
 }
