@@ -95,7 +95,7 @@ std::string Http::ReadResult(HINTERNET hRequest) {
         if (!WinHttpReadData(hRequest, outBuffer, dataSize, &downloadedSize))
             throw std::exception("WinHTTP: Could not read data from WinHTTP.");
 
-        result = result + outBuffer;
+        result = result + std::string(outBuffer);
 
         // Free the memory allocated to the buffer.
         delete[] outBuffer;
